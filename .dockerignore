@@ -18,5 +18,5 @@ dist
 build
 .vite
 
-# Data (mounted at runtime)
-data
+# Note: data folder is included for Railway deployment
+# For local dev, use docker-compose volume mount instead
