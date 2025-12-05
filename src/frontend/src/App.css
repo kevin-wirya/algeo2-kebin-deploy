@@ -1,0 +1,9 @@
+:root {
+  color: var(--text, #2d2419);
+  background: var(--page-bg, #e8d8b7);
+}
+
+body {
+  margin: 0;
+  background: var(--page-bg, #e8d8b7);
+}

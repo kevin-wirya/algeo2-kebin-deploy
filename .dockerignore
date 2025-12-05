@@ -1,0 +1,22 @@
+# General
+.git
+.gitignore
+README.md
+docs
+test
+node_modules
+**/node_modules
+.DS_Store
+
+# Python
+__pycache__
+*.pyc
+.venv
+*.egg-info
+
+dist
+build
+.vite
+
+# Data (mounted at runtime)
+data

@@ -1,0 +1,57 @@
+:root {
+  font-family: "Inter", "SF Pro Display", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --color-page-bg: #e8d8b7;
+  --color-panel: #f4ecde;
+  --color-text: #2d2419;
+  --color-muted: #7c6c5a;
+  --color-accent: #c18a2b;
+  --color-accent-dark: #a8731d;
+  --surface: #fffaf0;
+  --surface-alt: #f7f1e6;
+  --chip-bg: #f7e8c8;
+  --chip-ghost: #fff3dd;
+  --board: #e0d4bd;
+}
+
+:root[data-theme="dark"] {
+  --color-page-bg: #0f1629;
+  --color-panel: #1a2238;
+  --color-text: #e8edf7;
+  --color-muted: #9aa6c2;
+  --color-accent: #6c85b3;
+  --color-accent-dark: #a3b0d1;
+  --surface: #101727;
+  --surface-alt: #1f2a44;
+  --chip-bg: #2b3550;
+  --chip-ghost: #2a3452;
+  --board: #0d1324;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-page-bg);
+  color: var(--color-text);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.brand-logo {
+  height: 44px;
+  width: auto;
+}
