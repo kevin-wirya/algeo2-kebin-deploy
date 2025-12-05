@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import pickle
 from functools import lru_cache
 from io import BytesIO
 from pathlib import Path
@@ -22,6 +23,7 @@ ROOT_DIR = Path(__file__).resolve().parents[4]
 DATA_DIR = ROOT_DIR / "data"
 MAPPER_PATH = DATA_DIR / "mapper.json"
 COVERS_DIR = DATA_DIR / "covers"
+LSA_MODEL_PATH = DATA_DIR / "lsa_model.pkl"
 
 # Konfigurasi
 KOMPONEN_PCA = 50
@@ -97,6 +99,20 @@ class LSAState:
 
 @lru_cache(maxsize=1)
 def build_lsa() -> LSAState:
+    """
+    Load pre-computed LSA model from pickle file if available.
+    Falls back to computing from scratch if file doesn't exist.
+    """
+    # Try to load pre-computed model first
+    if LSA_MODEL_PATH.exists():
+        try:
+            with open(LSA_MODEL_PATH, 'rb') as f:
+                return pickle.load(f)
+        except Exception as e:
+            print(f"Warning: Could not load LSA model from {LSA_MODEL_PATH}: {e}")
+            print("Falling back to computing LSA from scratch...")
+    
+    # Fallback: compute from scratch
     mapper = load_mapper()
     freqs: List[Dict[str, int]] = []
     books: List[Dict] = []
@@ -263,23 +279,23 @@ def get_book(book_id: int):
         raise HTTPException(status_code=404, detail="Book not found")
     content = read_content(str(book_id))
     
-    # Temporarily disable LSA recommendations to reduce memory usage on Railway
-    # rekom = rekomendasi_buku(book_id, top_k=6)
-    # rekomendasi = [
-    #     {
-    #         "id": rid,
-    #         "title": mapper.get(str(rid), {}).get("title", ""),
-    #         "score": skor,
-    #     }
-    #     for rid, skor in rekom
-    # ]
+    # LSA recommendations (using pre-computed model)
+    rekom = rekomendasi_buku(book_id, top_k=6)
+    rekomendasi = [
+        {
+            "id": rid,
+            "title": mapper.get(str(rid), {}).get("title", ""),
+            "score": skor,
+        }
+        for rid, skor in rekom
+    ]
     
     return {
         "id": book_id,
         "title": meta.get("title", "").strip(),
         "cover": meta.get("cover", ""),
         "content": content,
-        "recommendations": [],  # Empty for now
+        "recommendations": rekomendasi,
     }
 
 
@@ -294,18 +310,17 @@ def search_title(
 
 @router.get("/search/text")
 def search_text(q: str = Query(..., min_length=1), top_k: int = Query(10, ge=1, le=30)):
-    # Temporarily disabled LSA search to reduce memory usage
-    # hits = cari_teks_lsa(q, top_k=top_k)
-    # mapper = load_mapper()
-    # return [
-    #     {
-    #         "id": rid,
-    #         "title": mapper.get(str(rid), {}).get("title", ""),
-    #         "score": skor,
-    #     }
-    #     for rid, skor in hits
-    # ]
-    return []
+    # LSA text search (using pre-computed model)
+    hits = cari_teks_lsa(q, top_k=top_k)
+    mapper = load_mapper()
+    return [
+        {
+            "id": rid,
+            "title": mapper.get(str(rid), {}).get("title", ""),
+            "score": skor,
+        }
+        for rid, skor in hits
+    ]
 
 
 @router.post("/image/retrieve")
