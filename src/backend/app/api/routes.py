@@ -262,21 +262,24 @@ def get_book(book_id: int):
     if not meta:
         raise HTTPException(status_code=404, detail="Book not found")
     content = read_content(str(book_id))
-    rekom = rekomendasi_buku(book_id, top_k=6)
-    rekomendasi = [
-        {
-            "id": rid,
-            "title": mapper.get(str(rid), {}).get("title", ""),
-            "score": skor,
-        }
-        for rid, skor in rekom
-    ]
+    
+    # Temporarily disable LSA recommendations to reduce memory usage on Railway
+    # rekom = rekomendasi_buku(book_id, top_k=6)
+    # rekomendasi = [
+    #     {
+    #         "id": rid,
+    #         "title": mapper.get(str(rid), {}).get("title", ""),
+    #         "score": skor,
+    #     }
+    #     for rid, skor in rekom
+    # ]
+    
     return {
         "id": book_id,
         "title": meta.get("title", "").strip(),
         "cover": meta.get("cover", ""),
         "content": content,
-        "recommendations": rekomendasi,
+        "recommendations": [],  # Empty for now
     }
 
 
@@ -291,16 +294,18 @@ def search_title(
 
 @router.get("/search/text")
 def search_text(q: str = Query(..., min_length=1), top_k: int = Query(10, ge=1, le=30)):
-    hits = cari_teks_lsa(q, top_k=top_k)
-    mapper = load_mapper()
-    return [
-        {
-            "id": rid,
-            "title": mapper.get(str(rid), {}).get("title", ""),
-            "score": skor,
-        }
-        for rid, skor in hits
-    ]
+    # Temporarily disabled LSA search to reduce memory usage
+    # hits = cari_teks_lsa(q, top_k=top_k)
+    # mapper = load_mapper()
+    # return [
+    #     {
+    #         "id": rid,
+    #         "title": mapper.get(str(rid), {}).get("title", ""),
+    #         "score": skor,
+    #     }
+    #     for rid, skor in hits
+    # ]
+    return []
 
 
 @router.post("/image/retrieve")
