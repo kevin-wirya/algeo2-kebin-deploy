@@ -25,6 +25,20 @@ app.add_middleware(
 def root():
     return {"message": "Backend siap!"}
 
+@app.get("/debug/check-data")
+def check_data():
+    import os
+    from pathlib import Path
+    data_dir = Path(__file__).resolve().parents[2] / "data"
+    return {
+        "data_exists": data_dir.exists(),
+        "txt_exists": (data_dir / "txt").exists(),
+        "txt_count": len(list((data_dir / "txt").glob("*.txt"))) if (data_dir / "txt").exists() else 0,
+        "covers_count": len(list((data_dir / "covers").glob("*.jpg"))) if (data_dir / "covers").exists() else 0,
+        "mapper_exists": (data_dir / "mapper.json").exists(),
+        "data_path": str(data_dir),
+    }
+
 # router utama untuk API
 app.include_router(api_router, prefix="/api")
 
