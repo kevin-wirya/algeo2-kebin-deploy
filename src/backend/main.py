@@ -30,12 +30,22 @@ def check_data():
     import os
     from pathlib import Path
     data_dir = Path(__file__).resolve().parents[2] / "data"
+    lsa_model_path = data_dir / "lsa_model.pkl"
+    
+    # Check if LSA model file exists and get size
+    lsa_exists = lsa_model_path.exists()
+    lsa_size_mb = 0
+    if lsa_exists:
+        lsa_size_mb = lsa_model_path.stat().st_size / 1024 / 1024
+    
     return {
         "data_exists": data_dir.exists(),
         "txt_exists": (data_dir / "txt").exists(),
         "txt_count": len(list((data_dir / "txt").glob("*.txt"))) if (data_dir / "txt").exists() else 0,
         "covers_count": len(list((data_dir / "covers").glob("*.jpg"))) if (data_dir / "covers").exists() else 0,
         "mapper_exists": (data_dir / "mapper.json").exists(),
+        "lsa_model_exists": lsa_exists,
+        "lsa_model_size_mb": round(lsa_size_mb, 2),
         "data_path": str(data_dir),
     }
 
