@@ -8,11 +8,14 @@ app = FastAPI(title="E-Library Backend IF2123")
 
 origins = [
     "http://localhost:5173",
+    "https://*.vercel.app",
+    "https://algeo2-kebin-deploy.vercel.app",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,       
+    allow_origins=origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],     
     allow_headers=["*"],
