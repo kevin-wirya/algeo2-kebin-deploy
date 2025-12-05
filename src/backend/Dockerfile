@@ -5,7 +5,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Toggle system library install (helps avoid apt issues on some hosts)
+ARG INSTALL_SYSTEM_LIBS=1
+RUN if [ "$INSTALL_SYSTEM_LIBS" = "1" ]; then \
+    apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libjpeg-dev \
     zlib1g-dev \
@@ -13,11 +16,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libopenjp2-7-dev \
     libtiff-dev \
     libwebp-dev \
- && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*; \
+    else \
+    echo "Skipping system library installation"; \
+    fi
 
 COPY src/backend/requirements.txt /app/src/backend/requirements.txt
 RUN pip install --no-cache-dir --upgrade pip \
- && pip install --no-cache-dir -r /app/src/backend/requirements.txt
+    && pip install --no-cache-dir -r /app/src/backend/requirements.txt
 
 # Copy application source
 COPY src/backend /app/src/backend
